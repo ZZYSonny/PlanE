@@ -1,0 +1,36 @@
+name: zinc12knoe
+program: experiments.zinc12knoe
+method: grid
+parameters:
+  dim_hidden:
+    values: [64,128]
+  dim_plane_pe:
+    values: [16]
+  num_layers:
+    values: [3]
+  flags_layer:
+    values: ["plane"]
+  flags_plane_agg:
+    values: ["n_t_b_gr_cr"]
+  flags_mlp_factor:
+    values: [2]
+  lr_start:
+    values: [1e-3]
+  lr_end:
+    values: [1e-5]
+  lr_factor:
+    values: [0.5]
+  lr_patience:
+    values: [30]
+  total_epoch:
+    values: [500]
+  batch_size:
+    values: [256]
+  seed:
+    values: [0,1,2,3,4,5,6,7,8,9]
+command:
+  - ${env}
+  - python3
+  - -m
+  - ${program}
+  - ${args}

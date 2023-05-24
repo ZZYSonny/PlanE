@@ -1,0 +1,42 @@
+name: ogb-molhiv
+program: experiments.ogb_pred
+method: grid
+parameters:
+  target:
+    values: ["ogbg-molhiv"]
+  dim_hidden:
+    values: [64]
+  dim_plane_pe:
+    values: [16]
+  num_layers:
+    values: [2,3]
+  flags_layer:
+    values: ["plane"]
+  flags_plane_agg:
+    values: ["n_t_b_cr_gr"]
+  flags_mlp_factor:
+    values: [2]
+  drop:
+    values: [0.3]
+  drop_loc:
+    values: ["edg_agg_out", "edg_com_out","enc_edg_com_out","enc_edg_com_agg_out"]
+  lr_start:
+    values: [1e-4]
+  lr_end:
+    values: [1e-5]
+  lr_factor:
+    values: [0.5]
+  lr_patience:
+    values: [25]
+  total_epoch:
+    values: [150]
+  batch_size:
+    values: [256]
+  seed:
+    values: [0,1,2,3,4]
+command:
+  - ${env}
+  - python3
+  - -m
+  - ${program}
+  - ${args}

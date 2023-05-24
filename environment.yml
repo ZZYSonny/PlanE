@@ -1,0 +1,26 @@
+name: plane
+channels:
+  - pyg
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+# Core ML packages
+  - pytorch=2.0.0
+  - pytorch-cuda=11.8
+  - libcufile=1.4.0.31
+  - pyg=2.3.0
+  - pytorch-scatter=2.1.1
+# Core Graph packages
+  - ogb=1.3.6
+  - sage=9.6
+# Drawing
+  - networkx=2.8.8
+  - pygraphviz=1.10
+# Tracking
+  - wandb=0.15.0
+# Python tools
+  - jupyter=1.0.0
+  - matplotlib=3.6.2
