@@ -33,6 +33,9 @@ class PickleDataset(tgdata.InMemoryDataset):
 def EXPDataset(root, transform=None, pre_transform=None):
     return PickleDataset(".dataset_src/EXP.pkl", root, transform, pre_transform)
 
+def P3RDataset(root, transform=None, pre_transform=None):
+    return PickleDataset(".dataset_src/P3R.pkl", root, transform, pre_transform)
+
 def map_qm9_to_pyg(json_file, make_undirected=True, remove_dup=False):
     # We're making the graph undirected just like the original repo.
     # Note: make_undirected makes duplicate edges, so we need to preserve edge types.

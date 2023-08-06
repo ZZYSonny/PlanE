@@ -1,0 +1,32 @@
+name: p3r 
+method: grid
+parameters:
+  dim_hidden:
+    values: [64]
+  dim_plane_pe:
+    values: [32]
+  num_layers:
+    values: [2]
+  flags_layer:
+    values: ["plane"]
+  flags_plane_agg:
+    values: ["n_t_b_gr_cr"]
+  flags_mlp_factor:
+    values: [2]
+  lr_start:
+    values: [1e-2]
+  total_epoch:
+    values: [100]
+  batch_size:
+    values: [256]
+  total_split:
+    values: [10]
+  cur_split:
+    values: [0]
+  seed:
+    values: [0]
+command:
+  - ${env}
+  - sage 
+  - experiments/p3r.py
+  - ${args}

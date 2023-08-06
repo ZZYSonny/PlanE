@@ -29,7 +29,7 @@ class TriEncoder(nn.Module):
         #           and id_e is the index of the edge feature
         #   code1: the index of the edge in the canonical walk
         #   code2: \kappa[code1]
-        [id_spqr, id_u, id_v, id_e, code1, code2] = data.spqr_read_from_e
+        id_spqr, id_u, id_v, id_e, code1, code2 = data.spqr_read_from_e
         # Initialize the edge feature
         h_cycle_edge = torch.zeros((id_e.size(0), self.config.dim), device=h_g.device)
         # For virtual edges, we use the learnable virtual edge feature
