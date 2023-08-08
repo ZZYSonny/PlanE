@@ -194,10 +194,10 @@ class PlaneLayer(nn.Module):
             self.encoder_spqr = TriEncoder(config)
         
         if self.flag_compute_b:
-            if 'cr' in config.plane_terms:
-                self.encoder_b = BiRecEncoder(config)
             if 'cnb' in config.plane_terms:
                 self.encoder_b = CnearBEncoder(config)
+            else:
+                self.encoder_b = BiRecEncoder(config)
         
         if self.flag_compute_planar_readout:
             self.encoder_pr = CRecSubEncoder(config)
