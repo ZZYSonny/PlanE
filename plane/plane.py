@@ -203,28 +203,28 @@ class PlaneLayer(nn.Module):
             self.encoder_pr = CRecSubEncoder(config)
 
         if self.flag_aggr_global_readout:
-            self.encoder_gr = tgnn.DeepSetsAggregation(nn.Identity(), MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor))
+            self.encoder_gr = tgnn.DeepSetsAggregation(nn.Identity(), MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com))
 
         if self.flag_aggr_neigh:
             if config.dim_edge_feature is not None:
                 if config.flags_plane_gine_type == "complete":
                     self.aggr_neigh = GINEMLPConv(
-                        MLP(config.dim + config.dim, config.dim, factor=-1 if config.flags_mlp_factor==-1 else config.flags_mlp_factor//2, drop=config.drop_edg),
-                        MLP(config.dim, config.dim, factor=config.flags_mlp_factor, drop=config.drop_agg),
+                        MLP(config.dim + config.dim, config.dim, norm=config.flags_norm_before_com, factor=-1 if config.flags_mlp_factor==-1 else config.flags_mlp_factor//2, drop=config.drop_edg),
+                        MLP(config.dim, config.dim, norm=config.flags_norm_before_com, factor=config.flags_mlp_factor, drop=config.drop_agg),
                         train_eps=True
                     )
                 elif config.flags_plane_gine_type == "incomplete":
-                    self.aggr_neigh = tgnn.GINEConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor), train_eps=True)
+                    self.aggr_neigh = tgnn.GINEConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com), train_eps=True)
                 else:
                     raise NotImplementedError
             else:
-                self.aggr_neigh = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor), train_eps=True)
+                self.aggr_neigh = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com), train_eps=True)
         
         if self.flag_aggr_spqr:
-            self.aggr_spqr = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor), train_eps=True)
+            self.aggr_spqr = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com), train_eps=True)
 
         if self.flag_aggr_b:
-            self.aggr_b = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor), train_eps=True)
+            self.aggr_b = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com), train_eps=True)
         
         self.mlp_out = nn.Sequential(
             nn.LazyLinear(config.dim),

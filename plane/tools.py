@@ -21,6 +21,7 @@ class ModelConfig:
     act_out: str = "Identity"
 
     flags_plane_agg: str = "n_t_b_gr_pr"
+    flags_norm_before_com: str = "batch_norm"
     flags_mlp_factor: int = 2
     flags_mlp_layer: int = 2
     flags_plane_gine_type: str = "incomplete"

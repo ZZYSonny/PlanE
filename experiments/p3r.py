@@ -6,15 +6,15 @@ arg = wandb_init()
 if arg is None:
     print("Using Arg Parser")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dim_hidden", type=int, default=48)
-    parser.add_argument("--dim_plane_pe", type=int, default=16)
+    parser.add_argument("--dim_hidden", type=int, default=64)
+    parser.add_argument("--dim_plane_pe", type=int, default=32)
     parser.add_argument("--num_layers", type=int, default=2)
     parser.add_argument("--flags_layer", type=str, default="plane")
-    parser.add_argument("--flags_plane_agg", type=str, default="n_t_b_gr_cr")
+    parser.add_argument("--flags_plane_agg", type=str, default="n_t_b_cr_gr")
     parser.add_argument("--flags_mlp_factor", type=int, default=2)
     parser.add_argument("--lr_start", type=float, default=1e-3)
-    parser.add_argument("--total_epoch", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=256)
+    parser.add_argument("--total_epoch", type=int, default=100)
+    parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--total_split", type=int, default=10)
     parser.add_argument("--cur_split", type=int, default=0)
     parser.add_argument("--seed", type=int, default=0)
@@ -30,8 +30,10 @@ def get_model():
         dim_edge_feature=None,
         dim_output=9,
         flags_layer=arg.flags_layer,
+        flags_norm_before_com=None,
         flags_plane_agg=arg.flags_plane_agg,
         flags_mlp_factor=arg.flags_mlp_factor,
+        act_out="Identity",
         drop_agg=0,
         drop_com=0,
         drop_enc=0,
