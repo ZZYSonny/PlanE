@@ -63,13 +63,20 @@ def find_metric(model_out: torch.Tensor, dataset_y: torch.Tensor):
 
 
 def get_dataset():
-    transform = tgtrans.Compose(
-        [
-            data_process.add_zero_edge_attr,
-            data_process.process,
-        ]
-    )
-    dataset = LargeGraphDataset(".dataset/LargeGraph/PlanE4", arg.dataset_name, pre_transform=transform)
+    if arg.flags_layer == "plane":
+        transform = tgtrans.Compose(
+            [
+                data_process.add_zero_edge_attr,
+                data_process.process,
+            ]
+        )
+    else:
+        transform = tgtrans.Compose(
+            [
+                data_process.add_zero_edge_attr,
+            ]
+        )
+    dataset = LargeGraphDataset(f".dataset/LargeGraph/{arg.flags_layer}", arg.dataset_name, pre_transform=transform)
     return [dataset[0]] * arg.batch_size
 
 

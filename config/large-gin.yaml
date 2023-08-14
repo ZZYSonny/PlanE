@@ -15,7 +15,7 @@ parameters:
   num_layers:
       values: [1]
   flags_layer:
-      values: ["plane"]
+      values: ["gin"]
   flags_plane_agg:
       values: ["n_t_b_gr_cr"]
   flags_mlp_factor:
