@@ -1,6 +1,7 @@
 from utils.common_imports import *
 import hashlib
 import pickle
+import itertools
 
 SPQR_NODE = typing.Tuple[str, sageall.Graph]
 SPQR_EDGE = typing.Tuple[int, int, typing.Union[None, str]]
@@ -42,7 +43,7 @@ BC_NODE_OFFSET = 3000
 
 class ENCODING:
     '''The encoding of a graph'''
-    code: list[int]
+    code: list[typing.Union[int,'ENCODING']]
     '''which triconnected component does this encoding belong to
         None if the encoding belongs to biconnected components or the whole graph '''
     spqr_node: SPQR_NODE
@@ -63,16 +64,31 @@ class ENCODING:
 
     def __lt__(self, other: typing.Union[int, 'ENCODING']):
         if isinstance(other, int):
-            return False
-        else:
-            # Lexico order
-            return self.code < other.code
+            other = [other]
+
+        for a,b in itertools.zip_longest(self, other):
+            if a is None: return True
+            elif b is None: return False
+            elif a < b: return True
+            elif a > b: return False
+        
+        return False
     
     def __eq__(self, other: 'ENCODING'):
         if isinstance(other, int):
-            return False
-        else:
-            return self.code == other.code
+            other = [other]
+
+        for a,b in itertools.zip_longest(self, other):
+            if a!=b: return False
+        
+        return True
+    
+    def __iter__(self):
+        for c in self.code:
+            if isinstance(c, int):
+                yield c
+            else:
+                yield from c
 
     def append_bracket(self, bracket: int):
         '''Append a bracket to the encoding'''
@@ -90,20 +106,15 @@ class ENCODING:
         '''Append an exisitng node encoding to current encoding
             e.g Adding the encoding of a biconnected component
             that is adjacent to the current cut node'''
-        if isinstance(code, int):
-            self.code.append(code)
-        else:
-            self.code.extend(code.code)
+        self.code.append(code)
 
     def append_edge(self, edge_code: typing.Union[int, 'ENCODING']):
         '''Append an exisitng edge encoding to current encoding
             e.g. Adding the encoding of a triconnected component
             that is a child of the current triconnected component
             on the cut pair'''
-        if isinstance(edge_code, int):
-            self.code.append(edge_code)
-        else:
-            self.code.extend(edge_code.code)
+        self.code.append(edge_code)
+        if not isinstance(edge_code, int):
             self.spqr_adj_code.append(edge_code)
     
     def get_cycles(self):
@@ -172,10 +183,17 @@ def encode_tcc_with_edge_with_direction(spqr_node: SPQR_NODE, e0: CUT_PAIR,
     (spqr_type, g) = spqr_node
     # Get planar embedding
     if not hasattr(g, '_embedding'):
-        is_planar = g.is_planar(set_embedding=True)
-        assert(is_planar)
+        g.is_planar(set_embedding=True)
+        g._embedding_index = {
+            u: {
+                v:i
+                for i,v in enumerate(neigh)
+            }
+            for u, neigh in g._embedding.items()
+        }
 
     adj: PLANAR_EMBEDDING = getattr(g, "_embedding")
+    adj_index = getattr(g, "_embedding_index")
 
     # Next edge
     def next_eid(u:int, now:int):
@@ -201,7 +219,7 @@ def encode_tcc_with_edge_with_direction(spqr_node: SPQR_NODE, e0: CUT_PAIR,
         if now_node not in vis:
             # New vertex
             # Use the next edge
-            eid = next_eid(now_node, adj[now_node].index(last_node))
+            eid = next_eid(now_node, adj_index[now_node][last_node])
             next_node = adj[now_node][eid]
             vis.add(now_node)
         elif (now_node, last_node) not in used_edges:
@@ -211,7 +229,7 @@ def encode_tcc_with_edge_with_direction(spqr_node: SPQR_NODE, e0: CUT_PAIR,
         else:
             # Old vertex, reversed edge used
             # Find the next edge
-            eid = next_eid(now_node, adj[now_node].index(last_node))
+            eid = next_eid(now_node, adj_index[now_node][last_node])
             next_node = adj[now_node][eid]
             while next_node is None or (now_node, next_node) in used_edges:
                 eid = next_eid(now_node, eid)
@@ -378,48 +396,45 @@ def encode_bcc(bcc_sage: sageall.Graph, node_code0: NODE_MAP, edge_code0: EDGE_M
     
     return tree, min_center, min_code
 
-def encode_cc(cc_sage: sageall.Graph, node_code: NODE_MAP, edge_code: EDGE_MAP, pwl_iter:int=3):
+def encode_cc(cc_sage: sageall.Graph, node_code: NODE_MAP, edge_code: EDGE_MAP):
     '''Encode a connected graph based on the Block-Cut Tree
     '''
 
-    # Here we use a modification of the planar isomorphism algorithm
-    # Our model updates a node feature based on its neighbors/triconnected components/biconnected components
-    # which means when recursively encoding a tree bottom up, a node might need to know what is above it
-    # This is not a problem in SPQR tree, as the starting edge is fixed, but in BC tree, things are different
-
-    # Here we iteratively update cut nodes with the information from its neighboring biconnected components
-    # Basically a WL like algorithm on cut nodes
+    # Here we run the Planar Isomoprhism Algorithm twice. Because when encoding a 
+    # biconnected component in the first iteration, the algorithm does not know which
+    # node is the upper cut node in the Block-Cut Tree. In the second iteration, we
+    # add this information to the algorithm using the code for the cut node from
+    # the first iteration. 
 
     tree: sageall.Graph = connectivity.blocks_and_cuts_tree(cc_sage)
+    [center] = tree.center()
 
-    for cur_iter in range(pwl_iter):
-        # Compute the encoding for all biconnected component
-        bcc_codes = {
-            node_cur: encode_bcc(cc_sage.subgraph(node_cur), node_code, edge_code)
-            for (type_cur, node_cur) in tree.vertex_iterator()
-            if type_cur=='B'
-        }
+    for _ in range(2):
+        bcc_codes = {}
+        for fa,cur in reversed([(None,center)]+list(tree.breadth_first_search(center, edges=True))):
+            (type_cur, node_cur) = cur
+            match type_cur:
+                case 'B':
+                    # Compute the encoding for all biconnected component
+                    bcc_codes[node_cur] = encode_bcc(cc_sage.subgraph(node_cur), node_code, edge_code)
+                case 'C':
+                    code = ENCODING()
+                    code.append_bracket(C_BEGIN)
+                    # Exising node code
+                    code.append_node(node_code[node_cur])
+                    # Code from neighboring biconnected components, sorted
+                    child_code = sorted(
+                        hash(tuple(bcc_codes[neigh[1]][2]))
+                        for neigh in tree.neighbors((type_cur, node_cur))
+                        if neigh != fa
+                    )
+                    # Code
+                    for c in child_code:
+                        code.append_node(c)
 
-        for (type_cur, node_cur) in tree.vertex_iterator():
-            # For every cut node
-            if type_cur=='C':
-                code = ENCODING()
-                code.append_bracket(C_BEGIN)
-                # Exising node code
-                code.append_node(node_code[node_cur])
-                # Code from neighboring biconnected components, sorted
-                child_code = sorted(
-                    bcc_codes[neigh[1]][2]
-                    for neigh in tree.neighbors((type_cur, node_cur))
-                )
-                # Code
-                for i,c in enumerate(child_code):
-                    code.append_char(BC_NODE_OFFSET+i)
-                    code.append_node(c)
-
-                code.append_bracket(C_END)
-                # Hash the code, to make further iteration faster
-                # Otherwise the length of the code builds up quickly
-                node_code[node_cur] = int(hashlib.sha256(pickle.dumps(code)).hexdigest()[:8], 16)
+                    code.append_bracket(C_END)
+                    # Hash the code, to make further iteration faster
+                    # Otherwise the length of the code builds up quickly
+                    node_code[node_cur] = hash(tuple(code))
     
     return tree, bcc_codes

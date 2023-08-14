@@ -48,7 +48,7 @@ class Data(tgdata.Data):
         else:
             return super().__cat_dim__(key, value, *args, **kwargs)
 
-def process(data: tgdata.Data, pwl_iter:int=4, directional_tree=True):
+def process(data: tgdata.Data, directional_tree=True):
     def discrete(xs):
         '''Discretize the input list of values into a list of integers
             out[i]=out[j] iif xs[i]=xs[j]
@@ -102,7 +102,7 @@ def process(data: tgdata.Data, pwl_iter:int=4, directional_tree=True):
     b_read_from_spqr_root = []
     def add_cc(g: sageall.Graph):
         nonlocal b_num_nodes
-        tree, bcc_tree_and_code = data_process_classical.encode_cc(g, discrete_node_feature, discrete_edge_feature, pwl_iter)
+        tree, bcc_tree_and_code = data_process_classical.encode_cc(g, discrete_node_feature, discrete_edge_feature)
 
         center = tree.center()[0]
         node_depth = {
