@@ -1,4 +1,4 @@
-from utils.common_imports import *
+from plane.common_imports import *
 import wandb
 import os
 
@@ -30,6 +30,7 @@ def wandb_init():
 class ExecutionConfig:
     num_epoch: int
     batch_size: int
+    goal: typing.Literal['min','max']
     seed: typing.Optional[int]
 
     log_loss_freq: int = -1
@@ -103,7 +104,6 @@ class Trainer:
 
     def run(self):
         torch.manual_seed(self.exec_config.seed)
-        #self.state_path = f"../state/{wandb.run.id}"
         self.state_path = f".model_state/{wandb.run.id}"
         self.model = self.get_model().to(self.exec_config.device)
         self.optimizer = self.get_optimizer(self.model)
@@ -111,9 +111,8 @@ class Trainer:
 
         epoch_start = 0
         best_metric = {
-            "train": float(-1e9),
-            "valid": float(-1e9),
-            "test": float(-1e9),
+            name: float(-1e9) if self.exec_config.goal == "max" else float(1e9)
+            for name in ["train", "valid", "test"]
         }
         train_dataset, valid_dataset, test_dataset = self.get_dataset()
         train_loader = tgloader.DataLoader(
@@ -175,21 +174,25 @@ class Trainer:
                 "lr": self.optimizer.param_groups[0]["lr"],
             }
 
-            if self.exec_config.save_best_state=="": 
+            if self.exec_config.save_best_state=="None": 
                 is_best = False
             else:
                 criterion = self.exec_config.save_best_state
-                is_best = cur_metric[criterion] > best_metric[criterion]
+                if self.exec_config.goal == "max":
+                    is_best = cur_metric[criterion] > best_metric[criterion]
+                else:
+                    is_best = cur_metric[criterion] < best_metric[criterion]
 
-            best_metric["train"] = max(best_metric["train"], cur_metric["train"])
-            best_metric["valid"] = max(best_metric["valid"], cur_metric["valid"])
-            best_metric["test"] = max(best_metric["test"], cur_metric["test"])            
+            for name in ["train", "valid", "test"]:
+                if self.exec_config.goal == "max":
+                    best_metric[name] = max(best_metric[name], cur_metric[name])
+                else:
+                    best_metric[name] = min(best_metric[name], cur_metric[name])
 
             wandb.log(cur_metric)
             wandb.run.summary.update({
-                "best_train": best_metric["train"],
-                "best_valid": best_metric["valid"],
-                "best_test": best_metric["test"],
+                f"best_{name}": best_metric[name]
+                for name in ["train", "valid", "test"]
             })
 
 

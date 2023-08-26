@@ -1,31 +1,31 @@
-from utils.common_imports import *
+from plane.common_imports import *
 from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
 
 @dataclass
 class ModelConfig:
-    dim: int
-    num_layers: int
-
     dim_output: int
     dim_node_feature: typing.Union[int, str, list]
     dim_edge_feature: typing.Union[int, str, list, None]
 
-    flags_layer: str
-    drop_enc: float
-    drop_rec: float
-    drop_agg: float
-    drop_com: float
-    drop_out: float
-    drop_edg: float
+    dim: int = 64
+    dim_plane_pe: int = 0
 
+    num_layers: int = 2
     act_out: str = "Identity"
+    flags_layer: str = "plane"
+
+    drop_enc: float = 0
+    drop_rec: float = 0
+    drop_agg: float = 0
+    drop_com: float = 0
+    drop_out: float = 0
+    drop_edg: float = 0
 
     flags_plane_agg: str = "n_t_b_gr_pr"
     flags_norm_before_com: str = "batch_norm"
     flags_mlp_factor: int = 2
     flags_mlp_layer: int = 2
     flags_plane_gine_type: str = "incomplete"
-    dim_plane_pe: int = 0
 
     def __post_init__(self):
         self.plane_terms = self.flags_plane_agg.split("_")

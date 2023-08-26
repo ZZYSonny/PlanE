@@ -25,3 +25,6 @@ from tqdm.autonotebook import tqdm
 
 import sage.all as sageall
 from sage.graphs import connectivity
+
+import warnings
+warnings.filterwarnings("ignore")

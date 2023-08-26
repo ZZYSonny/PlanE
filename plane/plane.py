@@ -1,4 +1,4 @@
-from utils.common_imports import *
+from plane.common_imports import *
 from .tools import *
 
 class TriEncoder(nn.Module):

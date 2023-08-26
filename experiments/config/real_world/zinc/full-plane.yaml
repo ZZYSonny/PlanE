@@ -1,0 +1,61 @@
+name: zinc12k
+program: experiments.main
+method: grid
+parameters:
+  dataset:
+    value: "ZINCFull"
+  cur_seed:
+    values: [0,1,2,3,4,5,6,7,8,9]
+  cur_split:
+    value: "None"
+  fn_loss:
+    value: "L1"
+  fn_metric:
+    value: "L1"
+  metric_goal:
+    value: "min"
+  
+  epochs:
+    value: 200
+  batch_size:
+    value: 256
+  
+  lr_start:
+    values: [1e-3]
+  lr_scheduler:
+    value: "StepLR_0.7_25"
+
+  model_flags_layer:
+    value: "plane"
+  model_num_layers:
+    value: 3
+  model_dim_hidden:
+    values: [64,128]
+  model_final_act:
+    value: "Identity"
+
+  model_dropout:
+    value: 0
+  model_dropout_loc:
+    value: ""
+
+  plane_dim_pe:
+    value: 16
+  plane_flags_agg:
+    value: "n_t_b_gr_cr"
+  
+  trainer_log_loss_freq:
+    value: 100
+  trainer_save_cp_freq:
+    value: 1
+  trainer_eval_train_freq:
+    value: -1
+  trainer_save_best_state:
+    value: "None"
+
+command:
+  - ${env}
+  - python3
+  - -m
+  - ${program}
+  - ${args}
