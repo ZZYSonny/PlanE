@@ -1,4 +1,4 @@
-name: zinc12k
+name: zinc12k-plane-ablation
 program: experiments.main
 method: grid
 parameters:
@@ -42,7 +42,7 @@ parameters:
   plane_dim_pe:
     value: 16
   plane_flags_agg:
-    values: ["t", "b", "n_t_b_gr", "n_t_b_cr", "t_b_gr_cr"]
+    values: ["t", "b", "n_t_b_gr", "n_t_b_cr", "t_b_cr_gr"]
   
   trainer_log_loss_freq:
     value: 25

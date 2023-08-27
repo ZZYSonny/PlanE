@@ -1,36 +1,36 @@
-name: zinc12k-noe-plane
+name: exp-plane
 program: experiments.main
 method: grid
 parameters:
   dataset:
-    value: "ZINC12kNoE"
+    value: "EXP"
   cur_seed:
-    values: [0,1,2,3,4,5,6,7,8,9]
+    value: 0
   cur_split:
-    value: "None"
+    values: ["0_10","1_10","2_10","3_10","4_10","5_10","6_10","7_10","8_10","9_10"]
   fn_loss:
-    value: "L1"
+    value: "BCEWithLogitsLoss"
   fn_metric:
-    value: "L1"
+    value: "binary_thres_0_accuracy"
   metric_goal:
-    value: "min"
+    value: "max"
   
   epochs:
-    value: 500
+    value: 100
   batch_size:
     value: 256
   
   lr_start:
-    values: [1e-3, 1e-4]
+    values: [1e-3,1e-4]
   lr_scheduler:
-    value: "ReduceLROnPlateau_1e-5_0.5_30"
+    value: "None"
 
   model_flags_layer:
     value: "plane"
   model_num_layers:
     value: 3
   model_dim_hidden:
-    values: [64,128]
+    value: 32
   model_final_act:
     value: "Identity"
 
@@ -45,9 +45,9 @@ parameters:
     value: "n_t_b_cr_gr"
   
   trainer_log_loss_freq:
-    value: 10
+    value: 5
   trainer_save_cp_freq:
-    value: 25
+    value: 1
   trainer_eval_train_freq:
     value: -1
   trainer_save_best_state:

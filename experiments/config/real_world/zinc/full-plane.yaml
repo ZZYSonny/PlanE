@@ -1,4 +1,4 @@
-name: zinc12k
+name: zincfull-plane
 program: experiments.main
 method: grid
 parameters:
@@ -42,7 +42,7 @@ parameters:
   plane_dim_pe:
     value: 16
   plane_flags_agg:
-    value: "n_t_b_gr_cr"
+    value: "n_t_b_cr_gr"
   
   trainer_log_loss_freq:
     value: 100

@@ -6,7 +6,7 @@ class TriEncoder(nn.Module):
         super().__init__()
         self.config = config
         self.h_virtual = nn.Parameter(torch.randn((config.dim)))
-        if config.dim_edge_feature is None:
+        if config.dim_edge_feature == "None":
             self.h_edge = nn.Parameter(torch.randn((config.dim)))
         self.pe = tgnn.PositionalEncoding(config.dim_plane_pe, base_freq=1/64)
         self.lin_node = MLP(2*config.dim+2*config.dim_plane_pe, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor)

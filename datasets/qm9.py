@@ -6,6 +6,22 @@ import numpy as np
 import torch
 import torch_geometric.data as tgdata
 
+CHEMICAL_ACC_NORMALISING_FACTORS = [
+    0.066513725,
+    0.012235489,
+    0.071939046,
+    0.033730778,
+    0.033486113,
+    0.004278493,
+    0.001330901,
+    0.004165489,
+    0.004128926,
+    0.00409976,
+    0.004527465,
+    0.012292586,
+    0.037467458,
+]
+
 def map_qm9_to_pyg(json_file, make_undirected=True, remove_dup=False):
     # We're making the graph undirected just like the original repo.
     # Note: make_undirected makes duplicate edges, so we need to preserve edge types.

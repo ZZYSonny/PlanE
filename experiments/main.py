@@ -109,7 +109,13 @@ match arg.fn_metric:
     case "L1":
         loss_func = nn.L1Loss()
         fn_metric = lambda pred, y: loss_func(pred.flatten(), y.flatten())
-    case "binary_accuracy":
+    case "QM9_L1":
+        from datasets.qm9 import CHEMICAL_ACC_NORMALISING_FACTORS
+        target = int(arg.cur_split)
+        loss_func = nn.L1Loss()
+        factor = CHEMICAL_ACC_NORMALISING_FACTORS[target]
+        fn_metric = lambda pred, y: loss_func(pred.flatten(), y.flatten()) / factor
+    case "binary_thres_0_accuracy":
         fn_metric = lambda pred, y: ((pred.flatten()>0) == y.flatten()).float().mean().item()
     case "multi_class_accuracy":
         fn_metric = lambda pred, y: ((pred.argmax(dim=-1)) == y.flatten()).float().mean().item()
