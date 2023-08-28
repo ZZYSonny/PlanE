@@ -3,7 +3,7 @@ program: experiments.main
 method: grid
 parameters:
   dataset:
-    value: "ogbg-molhiv"
+    value: "ogbg_molhiv"
   cur_seed:
     values: [0,1,2,3,4]
   cur_split:
@@ -45,7 +45,7 @@ parameters:
     value: "n_t_b_cr_gr"
   
   trainer_log_loss_freq:
-    value: 100
+    value: 20
   trainer_save_cp_freq:
     value: 1
   trainer_eval_train_freq:

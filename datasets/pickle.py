@@ -1,5 +1,5 @@
 import pickle
-import tqdm
+from tqdm import tqdm
 import torch
 import torch_geometric.data as tgdata
 

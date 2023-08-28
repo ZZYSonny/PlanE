@@ -11,7 +11,7 @@ class TriEncoder(nn.Module):
         self.pe = tgnn.PositionalEncoding(config.dim_plane_pe, base_freq=1/64)
         self.lin_node = MLP(2*config.dim+2*config.dim_plane_pe, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor)
         self.mlp_out = nn.ModuleList([
-            MLP(config.dim, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor, norm=None)
+            MLP(config.dim, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor, norm="None")
             for _ in range(3)
         ])
         self.bn_out = nn.BatchNorm1d(config.dim)
@@ -88,7 +88,7 @@ class BiRecEncoder(nn.Module):
             self.update = tgnn.GINEConv(nn.Identity())
         else:
             raise NotImplementedError
-        self.mlp_after_update = MLP(config.dim, config.dim, drop=config.drop_rec, factor=config.flags_mlp_factor, norm=None)
+        self.mlp_after_update = MLP(config.dim, config.dim, drop=config.drop_rec, factor=config.flags_mlp_factor, norm="None")
         self.read = tgnn.GINConv(MLP(config.dim, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor))
 
     def forward(self, data, h_spqr):
@@ -137,7 +137,7 @@ class CRecSubEncoder(nn.Module):
         super().__init__()
         self.config = config
         self.update = tgnn.GINConv(nn.Identity())
-        self.mlp_after_update = MLP(config.dim, config.dim, drop=config.drop_rec, factor=config.flags_mlp_factor, norm=None)
+        self.mlp_after_update = MLP(config.dim, config.dim, drop=config.drop_rec, factor=config.flags_mlp_factor, norm="None")
         self.read_b = tgnn.GINConv(nn.Identity())
         self.read_c = tgnn.GINConv(nn.Identity())
         self.mlp_out = MLP(config.dim, config.dim, drop=config.drop_enc, factor=config.flags_mlp_factor)
@@ -206,7 +206,7 @@ class PlaneLayer(nn.Module):
             self.encoder_gr = tgnn.DeepSetsAggregation(nn.Identity(), MLP(config.dim, config.dim, drop=config.drop_agg, factor=config.flags_mlp_factor, norm=config.flags_norm_before_com))
 
         if self.flag_aggr_neigh:
-            if config.dim_edge_feature is not None:
+            if config.dim_edge_feature != "None":
                 if config.flags_plane_gine_type == "complete":
                     self.aggr_neigh = GINEMLPConv(
                         MLP(config.dim + config.dim, config.dim, norm=config.flags_norm_before_com, factor=-1 if config.flags_mlp_factor==-1 else config.flags_mlp_factor//2, drop=config.drop_edg),

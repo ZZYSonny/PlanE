@@ -49,16 +49,16 @@ class Data(tgdata.Data):
             return super().__cat_dim__(key, value, *args, **kwargs)
 
 def process(data: tgdata.Data, directional_tree=True):
-    def discrete(xs):
-        '''Discretize the input list of values into a list of integers
-            out[i]=out[j] iif xs[i]=xs[j]
-        '''
-        unique_xs = [x for i,x in enumerate(xs) if x not in xs[:i]]
-        sorted_unique_xs = sorted(unique_xs)
-        return [sorted_unique_xs.index(x) for x in xs]
+    if data.edge_attr is None:
+        discrete_edge_attr = torch.zeros((data.num_edges,), dtype=torch.long).tolist()
+    else:
+        discrete_edge_attr = torch.unique(data.edge_attr, sorted=True, return_inverse=True)[1].tolist()
+    
+    if data.x is None:
+        discrete_node_feature = torch.zeros((data.num_nodes,), dtype=torch.long).tolist()
+    else:
+        discrete_node_feature = torch.unique(data.x, sorted=True, return_inverse=True)[1].tolist()
 
-    discrete_edge_attr = discrete(data.edge_attr.tolist())
-    discrete_node_feature = discrete(data.x.tolist())
     discrete_edge_feature = {
         (u, v, None): discrete_edge_attr[i]
         for i in range(data.num_edges)

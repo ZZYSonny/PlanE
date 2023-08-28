@@ -35,18 +35,18 @@ def MLP(dim_in, dim_out=None, factor=-1, drop=0.0, norm='batch_norm'):
     if factor == -1:
         return nn.Sequential(
             nn.Linear(dim_in, dim_out),
-            nn.Identity() if norm is None else nn.BatchNorm1d(dim_out),
+            nn.Identity() if norm == "None" else nn.BatchNorm1d(dim_out),
             nn.ReLU(),
             nn.Dropout(drop)
         )
     else:
         return nn.Sequential(
             nn.Linear(dim_in, dim_in*factor),
-            nn.Identity() if norm is None else nn.BatchNorm1d(dim_in*factor),
+            nn.Identity() if norm == "None" else nn.BatchNorm1d(dim_in*factor),
             nn.ReLU(),
             nn.Dropout(drop),
             nn.Linear(dim_in*factor, dim_out),
-            nn.Identity() if norm is None else nn.BatchNorm1d(dim_out),
+            nn.Identity() if norm == "None" else nn.BatchNorm1d(dim_out),
             nn.ReLU(),
             nn.Dropout(drop)
         )
@@ -85,7 +85,7 @@ class Embedding(nn.Module):
             case [x] if isinstance(x, int): 
                 self.embed1 = nn.Embedding(x, output_dim)
                 self.embed = lambda x: self.embed1(x.flatten())
-            case None:
+            case "None":
                 self.embed = lambda x: None
             case _:
                 raise NotImplementedError()

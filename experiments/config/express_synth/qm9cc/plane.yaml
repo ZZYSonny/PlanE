@@ -3,7 +3,7 @@ program: experiments.main
 method: grid
 parameters:
   dataset:
-    value: "QM9"
+    value: "QM9CC"
   cur_seed:
     values: [0,1,2,3,4]
   cur_split:

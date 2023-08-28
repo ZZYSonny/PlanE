@@ -1,24 +1,24 @@
-name: exp-plane
+name: p3r-gnn
 program: experiments.main
 method: grid
 parameters:
   dataset:
-    value: "EXP"
+    value: "P3R"
   cur_seed:
     value: 0
   cur_split:
     values: ["0_10","1_10","2_10","3_10","4_10","5_10","6_10","7_10","8_10","9_10"]
   fn_loss:
-    value: "BCEWithLogitsLoss"
+    value: "CrossEntropyLoss"
   fn_metric:
-    value: "binary_thres_0_accuracy"
+    value: "multi_class_accuracy"
   metric_goal:
     value: "max"
   
   epochs:
     value: 100
   batch_size:
-    value: 256
+    value: 128
   
   lr_start:
     values: [1e-3,1e-4]
@@ -26,11 +26,11 @@ parameters:
     value: "None"
 
   model_flags_layer:
-    value: "plane"
+    values: ["gcn", "gin"]
   model_num_layers:
-    value: 3
+    value: 2
   model_dim_hidden:
-    value: 32
+    values: [32,64]
   model_final_act:
     value: "Identity"
 
@@ -38,18 +38,20 @@ parameters:
     value: 0
   model_dropout_loc:
     value: ""
+  model_mlp_norm:
+    value: "None"
 
   plane_dim_pe:
     value: 16
   plane_flags_agg:
-    value: "n_t_b_cr_gr"
+    values: ""
   
   trainer_log_loss_freq:
-    value: 2
-  trainer_save_cp_freq:
     value: 1
-  trainer_eval_train_freq:
+  trainer_save_cp_freq:
     value: -1
+  trainer_eval_train_freq:
+    value: 1
   trainer_save_best_state:
     value: "None"
 

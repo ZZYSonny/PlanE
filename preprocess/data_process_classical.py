@@ -114,7 +114,7 @@ class ENCODING:
             that is a child of the current triconnected component
             on the cut pair'''
         self.code.append(edge_code)
-        if not isinstance(edge_code, int):
+        if isinstance(edge_code, ENCODING):
             self.spqr_adj_code.append(edge_code)
     
     def get_cycles(self):

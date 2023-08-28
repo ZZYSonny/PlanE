@@ -3,7 +3,7 @@ import torch
 
 def get_dataset(name: str, fn_final_transform=None, split: str = "", tag:str="v0"):
     root = f".dataset/{tag}/{name}"
-    pre_transform = fn_final_transform
+    pre_transform = fn_final_transform or (lambda x:x)
 
     # Dataset where data is splitted using the split argument
     fn_dataset = None
@@ -23,14 +23,14 @@ def get_dataset(name: str, fn_final_transform=None, split: str = "", tag:str="v0
             fn_dataset = lambda split: ZINC(root=root, subset=False, split=split, pre_transform=pre_transform)
         case "ogbg_molhiv":
             from datasets.ogb import ogbg_dataset_wrapper
-            fn_dataset = lambda split: ogbg_dataset_wrapper("ogbg-molhiv", root=root, split=split, pre_transform=pre_transform)            
+            fn_dataset = lambda split: ogbg_dataset_wrapper("ogbg_molhiv", root=root, split=split, pre_transform=pre_transform)            
 
     if fn_dataset is not None:
         train = fn_dataset("train")
         valid = fn_dataset("val")
         test  = fn_dataset("test")
 
-        if name=="QM9" and split != "":
+        if name=="QM9" and split != "None":
             cur_split = int(split)
             train.data.y = train.data.y[:, cur_split]
             valid.data.y = valid.data.y[:, cur_split]
@@ -73,11 +73,11 @@ def get_dataset(name: str, fn_final_transform=None, split: str = "", tag:str="v0
     if name == "Large_Tiger_Alaska":
         return dataset, None, None
     
-    raise Exception("Unknown Dataset")
+    raise Exception(f"Unknown Dataset {name}")
 
 
-def get_dataset_info(dataset_name):
-    match dataset_name:
+def get_dataset_info(name):
+    match name:
         case "QM9": return {
             "dim_node_feature": "lin",
             "dim_edge_feature": 4,
@@ -85,12 +85,12 @@ def get_dataset_info(dataset_name):
         }
         case "QM9NoE": return {
             "dim_node_feature": "lin",
-            "dim_edge_feature": None,
+            "dim_edge_feature": "None",
             "dim_output": 1
         }
         case "QM9CC": return {
             "dim_node_feature": 1,
-            "dim_edge_feature": None,
+            "dim_edge_feature": "None",
             "dim_output": 1
         }
         case "ZINC12k" | "ZINCFull": return {
@@ -100,7 +100,7 @@ def get_dataset_info(dataset_name):
         }
         case "ZINC12kNoE": return {
             "dim_node_feature": [32],
-            "dim_edge_feature": None,
+            "dim_edge_feature": "None",
             "dim_output": 1
         }
         case "ogbg_molhiv": return {
@@ -109,19 +109,19 @@ def get_dataset_info(dataset_name):
             "dim_output": 1
         }
         case "P3R": return {
-            "dim_node_feature": 1,
-            "dim_edge_feature": None,
+            "dim_node_feature": [1],
+            "dim_edge_feature": "None",
             "dim_output": 9
         }
         case "EXP": return {
             "dim_node_feature": [2],
-            "dim_edge_feature": None,
+            "dim_edge_feature": "None",
             "dim_output": 1
         }
         case "Large_Tiger_Alaska": return {
             "dim_node_feature": [1],
-            "dim_edge_feature": None,
+            "dim_edge_feature": "None",
             "dim_output": 2
         }
         case _:
-            raise Exception("Unknown Dataset")
+            raise Exception(f"Unknown Dataset {name}")

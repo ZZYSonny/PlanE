@@ -1,11 +1,14 @@
-def ogbg_dataset_wrapper(dataset_name, root, split, pre_transform=None, transform=None):
+def ogbg_dataset_wrapper(name, root, split, pre_transform=None, transform=None):
+    name = name.replace("_", "-")
+    if split=="val": split = "valid"
     from ogb.graphproppred import PygGraphPropPredDataset
 
-    dataset = PygGraphPropPredDataset(dataset_name, root, pre_transform=pre_transform, transform=transform)
+    dataset = PygGraphPropPredDataset(name, root, pre_transform=pre_transform, transform=transform)
     split_idx = dataset.get_idx_split()
     return dataset[split_idx[split]]
 
 def ogb_evaluator_wrapper(name):
+    name = name.replace("_", "-")
     from ogb.graphproppred import Evaluator
 
     evaluator = Evaluator(name=name)

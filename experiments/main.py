@@ -86,8 +86,8 @@ def fn_get_scheduler(optimizer):
     elif arg.lr_scheduler.startswith("StepLR"):
         return optim.lr_scheduler.StepLR(
             optimizer, 
-            step_size=int(arg.lr_scheduler.split("_")[1]), 
-            gamma=float(arg.lr_scheduler.split("_")[2])
+            gamma=float(arg.lr_scheduler.split("_")[1]),
+            step_size=int(arg.lr_scheduler.split("_")[2]), 
         )
 
 match arg.fn_loss:
@@ -99,7 +99,7 @@ match arg.fn_loss:
         fn_loss = lambda pred, y: torch.sqrt(loss_func(pred.flatten(), y.flatten()))
     case "BCEWithLogitsLoss":
         loss_func = nn.BCEWithLogitsLoss()
-        fn_loss = lambda pred, y: loss_func(pred.flatten(), y.flatten())
+        fn_loss = lambda pred, y: loss_func(pred.flatten(), y.float().flatten())
     case "CrossEntropyLoss":
         fn_loss = nn.CrossEntropyLoss()
     case _:
@@ -127,7 +127,9 @@ match arg.fn_metric:
 
 
 def fn_get_dataset():
-    return get_dataset(arg.dataset, arg.cur_split)
+    # TO BE REMOVED
+    from preprocess.data_process import process
+    return get_dataset(name=arg.dataset, split=arg.cur_split, fn_final_transform=process)
 
 
 exec_config = ExecutionConfig(

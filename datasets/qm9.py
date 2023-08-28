@@ -1,7 +1,7 @@
 import os.path as osp
 import gzip
 import json
-import tqdm
+from tqdm import tqdm
 import numpy as np
 import torch
 import torch_geometric.data as tgdata
