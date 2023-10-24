@@ -16,7 +16,7 @@ parameters:
     value: "max"
   
   epochs:
-    value: 100
+    value: 50
   batch_size:
     value: 256
   
