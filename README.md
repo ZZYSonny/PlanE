@@ -40,12 +40,11 @@ The P3R dataset is made from 9 planar 3-regular graphs of size 10. The training,
 If you make use of this code, or its accompanying [paper](https://arxiv.org/abs/2307.01180), please cite this work as follows:
 ```
 @inproceedings{DimitrovZAC23,
-  author    = {Radoslav Dimitrov and
-               Zeyang Zhao and
+  author    = {Radoslav Dimitrov and Zeyang Zhao and
                Ralph Abboud and
                {\.I}smail {\.I}lkan Ceylan},
   title     = {PLANE: Representation Learning over Planar Graphs},
-  booktitle    = {Proceedings of the Thirty-Fourth Annual Conference on Advances in Neural Information Processing Systems, {NeurIPS}},
+  booktitle    = {Proceedings of the Thirty-Seventh Annual Conference on Advances in Neural Information Processing Systems, {NeurIPS}},
   year         = {2023}
 }
 ```
