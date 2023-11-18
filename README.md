@@ -1,5 +1,5 @@
 # PlanE: Representation Learning over Planar Graphs
-This repository is the official codebase of the NeurIPS 2023 paper "Representation Learning over Planar Graphs"([Arxiv]((https://arxiv.org/abs/2307.01180))). 
+This repository is the official codebase of the NeurIPS 2023 paper "Representation Learning over Planar Graphs"([Arxiv](https://arxiv.org/abs/2307.01180)). 
 
 The goal of this work is to design architectures for **efficiently** learning **complete** invariants of planar graphs. Inspired by the classical planar graph isomorphism algorithm of Hopcroft and Tarjan, we propose PlanE as a framework for planar representation learning. PlanE includes architectures which can learn **complete** invariants over planar graphs while remaining practically scalable. 
 
