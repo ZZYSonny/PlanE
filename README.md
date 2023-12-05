@@ -43,7 +43,7 @@ If you make use of this code, or its accompanying [paper](https://arxiv.org/abs/
   author    = {Radoslav Dimitrov and Zeyang Zhao and
                Ralph Abboud and
                {\.I}smail {\.I}lkan Ceylan},
-  title     = {PLANE: Representation Learning over Planar Graphs},
+  title     = {PlanE: Representation Learning over Planar Graphs},
   booktitle    = {Proceedings of the Thirty-Seventh Annual Conference on Advances in Neural Information Processing Systems, {NeurIPS}},
   year         = {2023}
 }
