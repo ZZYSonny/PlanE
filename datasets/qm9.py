@@ -1,10 +1,10 @@
-import os.path as osp
 import gzip
 import json
-from tqdm import tqdm
 import numpy as np
+from os import path as osp
 import torch
-import torch_geometric.data as tgdata
+from torch_geometric import data as tgdata
+from tqdm import tqdm
 
 CHEMICAL_ACC_NORMALISING_FACTORS = [
     0.066513725,
@@ -22,11 +22,14 @@ CHEMICAL_ACC_NORMALISING_FACTORS = [
     0.037467458,
 ]
 
+
 def map_qm9_to_pyg(json_file, make_undirected=True, remove_dup=False):
     # We're making the graph undirected just like the original repo.
     # Note: make_undirected makes duplicate edges, so we need to preserve edge types.
     # Note: The original repo also add self-loops. We don't need that given how we see hops.
-    edge_index = np.array([[g[0], g[2]] for g in json_file["graph"]]).T  # Edge Index
+    edge_index = np.array(
+        [[g[0], g[2]] for g in json_file["graph"]]
+    ).T  # Edge Index
     edge_attributes = np.array(
         [g[1] - 1 for g in json_file["graph"]]
     )  # Edge type (-1 to put in [0, 3] range)
@@ -38,7 +41,8 @@ def map_qm9_to_pyg(json_file, make_undirected=True, remove_dup=False):
         if remove_dup:
             edge_index = torch.LongTensor(
                 np.unique(
-                    np.concatenate([edge_index, edge_index_reverse], axis=1), axis=1
+                    np.concatenate([edge_index, edge_index_reverse], axis=1),
+                    axis=1,
                 )
             )
         else:
@@ -46,28 +50,36 @@ def map_qm9_to_pyg(json_file, make_undirected=True, remove_dup=False):
                 np.concatenate([edge_index, edge_index_reverse], axis=1)
             )
             edge_attributes = torch.LongTensor(
-                np.concatenate([edge_attributes, np.copy(edge_attributes)], axis=0)
+                np.concatenate(
+                    [edge_attributes, np.copy(edge_attributes)], axis=0
+                )
             )
     x = torch.FloatTensor(np.array(json_file["node_features"]))
     y = torch.FloatTensor(np.array(json_file["targets"]).T)
-    return tgdata.Data(x=x, edge_index=edge_index, edge_attr=edge_attributes, y=y)
+    return tgdata.Data(
+        x=x, edge_index=edge_index, edge_attr=edge_attributes, y=y
+    )
 
 
 class QM9Dataset(tgdata.InMemoryDataset):
-    def __init__(self, root, split, transform=None, pre_transform=None, pre_filter=None):
+    def __init__(
+        self, root, split, transform=None, pre_transform=None, pre_filter=None
+    ):
         self.json_gzip_path = f".dataset_src/QM9_{split}.jsonl.gz"
         new_root = osp.join(root, split)
-        super(QM9Dataset, self).__init__(new_root, transform, pre_transform, pre_filter)
+        super(QM9Dataset, self).__init__(
+            new_root, transform, pre_transform, pre_filter
+        )
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
         return []
-    
+
     @property
     def processed_file_names(self):
-        return ['data.pt']
-    
+        return ["data.pt"]
+
     def download(self):
         pass
 

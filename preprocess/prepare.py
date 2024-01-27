@@ -11,6 +11,6 @@ for dataset in [
     "ZINC12kNoE",
     "ogbg_molhiv",
     "P3R",
-    "EXP"
+    "EXP",
 ]:
-    get_dataset(name=dataset,fn_final_transform=process)
+    get_dataset(name=dataset, fn_final_transform=process)

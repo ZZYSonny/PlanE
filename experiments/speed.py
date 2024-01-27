@@ -1,10 +1,10 @@
-from plane.common_imports import *
-from plane import models
-from .trainer import *
-from datasets.pickle import LargeGraphDataset
-import time
 import argparse
+from datasets.pickle import LargeGraphDataset
+from experiments.trainer import *
+from plane import models
+from plane.common_imports import *
 from preprocess import data_process
+import time
 
 
 wandb_init()
@@ -78,7 +78,11 @@ def get_dataset():
                 data_process.add_zero_edge_attr,
             ]
         )
-    dataset = LargeGraphDataset(f".dataset/v0/{arg.flags_layer}", arg.dataset_name, pre_transform=transform)
+    dataset = LargeGraphDataset(
+        f".dataset/v0/{arg.flags_layer}",
+        arg.dataset_name,
+        pre_transform=transform,
+    )
     return [dataset[0]] * arg.batch_size
 
 
@@ -114,10 +118,11 @@ def evaluate_model():
             pred = model(batch.to(device))
             y_true.append(batch.y.detach().cpu())
             y_pred.append(pred.detach().cpu())
-        y_true = torch.cat(y_true, dim = 0)
-        y_pred = torch.cat(y_pred, dim = 0)
+        y_true = torch.cat(y_true, dim=0)
+        y_pred = torch.cat(y_pred, dim=0)
         metric = find_metric(y_pred, y_true)
         return metric
+
 
 print("Warming Up Training")
 train_one_epoch()
@@ -139,4 +144,6 @@ for epoch in range(arg.total_epoch):
     time_end = time.time()
     time_logs.append(time_end - time_start)
     print(f"    Epoch {epoch} Time {time_logs[-1]}s")
-print(f"Validation Time Per Epoch {np.mean(time_logs)} +- {np.std(time_logs)}s")
+print(
+    f"Validation Time Per Epoch {np.mean(time_logs)} +- {np.std(time_logs)}s"
+)

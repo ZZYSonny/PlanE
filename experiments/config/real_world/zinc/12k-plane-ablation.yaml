@@ -14,12 +14,12 @@ parameters:
     value: "L1"
   metric_goal:
     value: "min"
-  
+
   epochs:
     value: 500
   batch_size:
     value: 256
-  
+
   lr_start:
     values: [1e-3, 1e-4]
   lr_scheduler:
@@ -43,7 +43,7 @@ parameters:
     value: 16
   plane_flags_agg:
     values: ["t", "b", "n_t_b_gr", "n_t_b_cr", "t_b_cr_gr"]
-  
+
   trainer_log_loss_freq:
     value: 25
   trainer_save_cp_freq:

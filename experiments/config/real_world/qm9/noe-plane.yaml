@@ -3,7 +3,7 @@ program: experiments.main
 method: grid
 parameters:
   dataset:
-    value: "QM9"
+    value: "QM9NoE"
   cur_seed:
     values: [0,1,2,3,4]
   cur_split:
@@ -14,12 +14,12 @@ parameters:
     value: "QM9_L1"
   metric_goal:
     value: "min"
-  
+
   epochs:
     value: 200
   batch_size:
     value: 256
-  
+
   lr_start:
     values: [1e-3]
   lr_scheduler:
@@ -40,10 +40,10 @@ parameters:
     value: ""
 
   plane_dim_pe:
-    value: 16
+    value: 32
   plane_flags_agg:
     value: "n_t_b_cr_gr"
-  
+
   trainer_log_loss_freq:
     value: 100
   trainer_save_cp_freq:
